@@ -1,4 +1,4 @@
-class HashTableEntry:
+class Entry:
     """
     Linked List hash table key/value pair
     """
@@ -17,12 +17,12 @@ class HashTable:
     """
     A hash table that with `capacity` buckets
     that accepts string keys
-
     Implement this.
     """
 
     def __init__(self, capacity):
         self.capacity = capacity
+        self.size = 0
         self.storage = [
             None] * capacity if capacity >= MIN_CAPACITY else [None] * MIN_CAPACITY
 
@@ -31,9 +31,7 @@ class HashTable:
         Return the length of the list you're using to hold the hash
         table data. (Not the number of items stored in the hash table,
         but the number of slots in the main list.)
-
         One of the tests relies on this.
-
         Implement this.
         """
         return len(self.storage)
@@ -41,7 +39,6 @@ class HashTable:
     def get_load_factor(self):
         """
         Return the load factor for this hash table.
-
         Implement this.
         """
         # Your code here
@@ -49,7 +46,6 @@ class HashTable:
     def fnv1(self, key):
         """
         FNV-1 Hash, 64-bit
-
         Implement this, and/or DJB2.
         """
         hash = 0xcbf29ce484222325
@@ -62,7 +58,6 @@ class HashTable:
     def djb2(self, key):
         """
         DJB2 hash, 32-bit
-
         Implement this, and/or FNV-1.
         """
         hash = 5381
@@ -81,56 +76,96 @@ class HashTable:
     def put(self, key, value):
         """
         Store the value with the given key.
-
         Hash collisions should be handled with Linked List Chaining.
-
         Implement this.
         """
-        self.storage[self.hash_index(key)] = value
-        return "successfully added"
+        self.size += 1
+        index = self.hash_index(key)
+        node = self.storage[index]
+        if node is None:
+            self.storage[index] = Entry(key, value)
+            return
+        prev = node
+        while node is not None and node.key != key:
+            prev = node
+            node = node.next
+        if node != None:
+            node.value = value
+        prev.next = Entry(key, value)
 
     def delete(self, key):
         """
         Remove the value stored with the given key.
-
         Print a warning if the key is not found.
-
         Implement this.
         """
-        try:
-            self.storage[self.hash_index(key)] = None
-            return "successfully deleted"
-        except IndexError:
-            return "Error, no such key"
+        # index = self.hash_index(key)
+        # node = self.storage[index]
+        # first = node
+        # prev = node
+        # while node is not None and node.key != key:
+        #     prev = node
+        #     node = node.next
+        # if node is None:
+        #     return 'not here'
+        # else:
+        #     self.size -= 1
+        #     result = node.value
+        #     prev.next = node.next
+        #     return result
+        #     # if node.next is None:
+        #     #     prev.next = None
+        #     #     return 'deleted'
+        #     # else:
+        #     #     prev.next = node.next
+        #     #     return 'deleted'
+        # 1. Compute hash
+        index = self.hash_index(key)
+        node = self.storage[index]
+        prev = None
+        while node is not None and node.key != key:
+            prev = node
+            node = node.next
+        if node is None:
+            return None
+        else:
+            self.size -= 1
+            result = node.value
+            if prev is None:
+                self.storage[index] = node.next
+            else:
+                prev.next = prev.next.next
+            return result
 
     def get(self, key):
         """
         Retrieve the value stored with the given key.
-
         Returns None if the key is not found.
-
         Implement this.
         """
-        try:
-            return self.storage[self.hash_index(key)]
-        except IndexError:
+        index = self.hash_index(key)
+        node = self.storage[index]
+        while node is not None and node.key != key:
+            node = node.next
+        if node is None:
             return None
+        else:
+            return node.value
 
     def resize(self, new_capacity):
         """
         Changes the capacity of the hash table and
         rehashes all key/value pairs.
-
         Implement this.
         """
         # Your code here
 
 
-# ht = HashTable(7)
-# ht.put('good', "REEEEEEEEEE")
-# print(ht.get('good'))
-# print(ht.delete('good'))
-# print(ht.get('good'))
+ht = HashTable(8)
+ht.put('good', 'im still here')
+print(ht.get('good'))
+print(ht.delete('good'))
+print(ht.get('good'))
 
 
 # if __name__ == "__main__":
