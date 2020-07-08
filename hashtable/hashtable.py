@@ -23,6 +23,7 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity
         self.size = 0
+        self.keys = []
         self.storage = [
             None] * capacity if capacity >= MIN_CAPACITY else [None] * MIN_CAPACITY
 
@@ -41,7 +42,7 @@ class HashTable:
         Return the load factor for this hash table.
         Implement this.
         """
-        # Your code here
+        return self.size / self.capacity
 
     def fnv1(self, key):
         """
@@ -80,6 +81,7 @@ class HashTable:
         Implement this.
         """
         self.size += 1
+        self.keys.append(key)
         index = self.hash_index(key)
         node = self.storage[index]
         if node is None:
@@ -92,6 +94,12 @@ class HashTable:
         if node != None:
             node.value = value
         prev.next = Entry(key, value)
+        # resize if load factor is too large
+        load = self.get_load_factor()
+        if load > 0.7:
+            self.resize(self.capacity * 2)
+        if load < 0.2:
+            self.resize(self.capacity / 2)
 
     def delete(self, key):
         """
@@ -119,7 +127,6 @@ class HashTable:
         #     # else:
         #     #     prev.next = node.next
         #     #     return 'deleted'
-        # 1. Compute hash
         index = self.hash_index(key)
         node = self.storage[index]
         prev = None
@@ -130,6 +137,7 @@ class HashTable:
             return None
         else:
             self.size -= 1
+            self.keys.remove(key)
             result = node.value
             if prev is None:
                 self.storage[index] = node.next
@@ -158,37 +166,45 @@ class HashTable:
         rehashes all key/value pairs.
         Implement this.
         """
-        # Your code here
+        old_storage = {}
+        for i in range(len(self.keys)):
+            key = self.keys[i]
+            old_storage[key] = self.get(key)
+        self.capacity = new_capacity
+        self.storage = [None] * self.capacity
+        self.size = 0
+        for key, value in old_storage.items():
+            self.put(key, value)
 
 
-ht = HashTable(8)
-ht.put('good', 'im still here')
-print(ht.get('good'))
-print(ht.delete('good'))
-print(ht.get('good'))
+# ht = HashTable(8)
+# ht.put('good', 'im still here')
+# print(ht.get('good'))
+# print(ht.delete('good'))
+# print(ht.get('good'))
 
 
-# if __name__ == "__main__":
-#     ht = HashTable(13)
+if __name__ == "__main__":
+    ht = HashTable(13)
 
-#     ht.put("line_1", "'Twas brillig, and the slithy toves")
-#     ht.put("line_2", "Did gyre and gimble in the wabe:")
-#     ht.put("line_3", "All mimsy were the borogoves,")
-#     ht.put("line_4", "And the mome raths outgrabe.")
-#     ht.put("line_5", '"Beware the Jabberwock, my son!')
-#     ht.put("line_6", "The jaws that bite, the claws that catch!")
-#     ht.put("line_7", "Beware the Jubjub bird, and shun")
-#     ht.put("line_8", 'The frumious Bandersnatch!"')
-#     ht.put("line_9", "He took his vorpal sword in hand;")
-#     ht.put("line_10", "Long time the manxome foe he sought--")
-#     ht.put("line_11", "So rested he by the Tumtum tree")
-#     ht.put("line_12", "And stood awhile in thought.")
+    ht.put("line_1", "'Twas brillig, and the slithy toves")
+    ht.put("line_2", "Did gyre and gimble in the wabe:")
+    ht.put("line_3", "All mimsy were the borogoves,")
+    ht.put("line_4", "And the mome raths outgrabe.")
+    ht.put("line_5", '"Beware the Jabberwock, my son!')
+    ht.put("line_6", "The jaws that bite, the claws that catch!")
+    ht.put("line_7", "Beware the Jubjub bird, and shun")
+    ht.put("line_8", 'The frumious Bandersnatch!"')
+    ht.put("line_9", "He took his vorpal sword in hand;")
+    ht.put("line_10", "Long time the manxome foe he sought--")
+    ht.put("line_11", "So rested he by the Tumtum tree")
+    ht.put("line_12", "And stood awhile in thought.")
 
-#     print("")
+    print("")
 
-#     # Test storing beyond capacity
-#     for i in range(1, 13):
-#         print(ht.get(f"line_{i}"))
+    # Test storing beyond capacity
+    for i in range(1, 13):
+        print(ht.get(f"line_{i}"))
 
 # # Test resizing
 # old_capacity = ht.get_num_slots()
