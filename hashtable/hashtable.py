@@ -107,26 +107,6 @@ class HashTable:
         Print a warning if the key is not found.
         Implement this.
         """
-        # index = self.hash_index(key)
-        # node = self.storage[index]
-        # first = node
-        # prev = node
-        # while node is not None and node.key != key:
-        #     prev = node
-        #     node = node.next
-        # if node is None:
-        #     return 'not here'
-        # else:
-        #     self.size -= 1
-        #     result = node.value
-        #     prev.next = node.next
-        #     return result
-        #     # if node.next is None:
-        #     #     prev.next = None
-        #     #     return 'deleted'
-        #     # else:
-        #     #     prev.next = node.next
-        #     #     return 'deleted'
         index = self.hash_index(key)
         node = self.storage[index]
         prev = None
@@ -177,13 +157,6 @@ class HashTable:
             self.put(key, value)
 
 
-# ht = HashTable(8)
-# ht.put('good', 'im still here')
-# print(ht.get('good'))
-# print(ht.delete('good'))
-# print(ht.get('good'))
-
-
 if __name__ == "__main__":
     ht = HashTable(13)
 
@@ -206,15 +179,15 @@ if __name__ == "__main__":
     for i in range(1, 13):
         print(ht.get(f"line_{i}"))
 
-# # Test resizing
-# old_capacity = ht.get_num_slots()
-# ht.resize(ht.capacity * 2)
-# new_capacity = ht.get_num_slots()
+# Test resizing
+old_capacity = ht.get_num_slots()
+ht.resize(ht.capacity * 2)
+new_capacity = ht.get_num_slots()
 
-# print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
-# # Test if data intact after resizing
-# for i in range(1, 13):
-#     print(ht.get(f"line_{i}"))
+# Test if data intact after resizing
+for i in range(1, 13):
+    print(ht.get(f"line_{i}"))
 
-# print("")
+print("")
