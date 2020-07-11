@@ -13,10 +13,6 @@ arr = [[8, 4], [90, -1, 3], [9, 62], [-7, -1, -56, -6], [201], [76, 18]]
 def inner_adition(arr):
     output = 0
     for item in arr:
-        # smallest = min(item)
-        # for sub_item in item:
-        #     if sub_item < smallest:
-        #         smallest = sub_item
         output += min(item)
     return output
 
